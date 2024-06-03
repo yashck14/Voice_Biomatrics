@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <Button
+        android:id="@+id/startRecordingButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/button_layout"
+        android:text="Start Recording for Data training"
+        android:textColor="#FFFFFF"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/stopRecordingButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/button_layout"
+        android:text="Stop Recording"
+        android:textColor="#FFFFFF"
+        app:layout_constraintEnd_toEndOf="@+id/startRecordingButton"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/startRecordingButton" />
+
+    <Button
+        android:id="@+id/startTestRecordingButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/button_layout"
+        android:text="Start Test Recording"
+        android:textColor="#FFFFFF"
+        app:layout_constraintEnd_toEndOf="@+id/stopRecordingButton"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/stopRecordingButton"
+        app:layout_constraintTop_toBottomOf="@+id/stopRecordingButton" />
+
+    <Button
+        android:id="@+id/stopTestRecordingButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/button_layout"
+        android:text="Stop Test Recording"
+        android:textColor="#FFFFFF"
+        app:layout_constraintStart_toStartOf="@+id/startTestRecordingButton"
+        app:layout_constraintTop_toBottomOf="@+id/startTestRecordingButton" />
+
+    <Button
+        android:id="@+id/check"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/button_layout"
+        android:text="check"
+        android:textColor="#FFFFFF"
+        app:layout_constraintEnd_toEndOf="@+id/stopTestRecordingButton"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/stopTestRecordingButton"
+        app:layout_constraintTop_toBottomOf="@+id/stopTestRecordingButton" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
