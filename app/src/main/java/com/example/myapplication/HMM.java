@@ -64,6 +64,17 @@ public class HMM {
         return numObservations;
     }
 
+    public void setTransitionProb(double[][] transitionProb) {
+        this.transitionProb = transitionProb;
+    }
+
+    public void setInitialProb(double[] initialProb) {
+        this.initialProb = initialProb;
+    }
+
+    public void setEmissionProb(double[][] emissionProb) {
+        this.emissionProb = emissionProb;
+    }
 
     public double[][] getTransitionProb() {
         return transitionProb;

@@ -7,8 +7,8 @@ public class HMMTrainer {
     }
 
     public void train(int[] observations, int maxIterations) {
-        int numStates = hmm.getTransitionProb().length;
-        int numObservations = hmm.getEmissionProb()[0].length;
+        int numStates = hmm.getInitialProb().length;
+        int numObservations = hmm.getNumObservations();
         int T = observations.length;
 
         System.out.println("Number of States: " + numStates);
@@ -18,7 +18,6 @@ public class HMMTrainer {
         double[][] transitionProb = hmm.getTransitionProb();
         double[][] emissionProb = hmm.getEmissionProb();
         double[] initialProb = hmm.getInitialProb();
-
         double[][] alpha;
         double[][] beta;
         double[][] gamma;
@@ -58,7 +57,7 @@ public class HMMTrainer {
             }
 
             for (int i = 0; i < numStates; i++) {
-                initialProb[i] = gamma[0][i];
+                initialProb[i] = gamma[0][i]+0.135;
             }
 
             for (int i = 0; i < numStates; i++) {
@@ -67,7 +66,7 @@ public class HMMTrainer {
                     for (int t = 0; t < T - 1; t++) {
                         num += xi[t][i][j];
                     }
-                    transitionProb[i][j] = num / gammaSum[i];
+                    transitionProb[i][j] = num / gammaSum[i]+0.135;
                 }
             }
 
@@ -79,10 +78,28 @@ public class HMMTrainer {
                             num += gamma[t][j];
                         }
                     }
-                    emissionProb[j][k] = num / gammaSum[j];
+                    emissionProb[j][k] = num / gammaSum[j]+0.135;
                 }
             }
         }
+        System.out.println("\n after processing transitionProb:-\n");
+        for (int i = 0;i<5;i++){
+            for (int j =0;j<5;j++){
+                System.out.print(transitionProb[i][j]);
+            }
+        }System.out.println("\nafter processing emissionProb:-\n");
+        for (int i = 0;i<5;i++){
+            for (int j =0;j<27;j++){
+                System.out.print(emissionProb[i][j]);
+            }
+        }
+        System.out.println("\nafter processing OBSERVATIONS:-\n");
+        for (int i =0;i< 5;i++){
+            System.out.print(initialProb[i]);
+        }
+        hmm.setEmissionProb(emissionProb);
+        hmm.setTransitionProb(transitionProb);
+        hmm.setInitialProb(initialProb);
     }
 
     private double[][] forward(int[] observations, int numStates, int T, double[][] transitionProb, double[][] emissionProb, double[] initialProb) {

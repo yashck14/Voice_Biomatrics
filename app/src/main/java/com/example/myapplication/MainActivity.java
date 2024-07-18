@@ -6,12 +6,15 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Random;
 
@@ -32,13 +35,13 @@ public class MainActivity extends AppCompatActivity{
     private double[] M_initialProb;
 
 
-//    private HMM hmm;
-//    private HMMTrainer hmmTrainer;
-//    private HMMPredictor hmmPredictor;
-    double a;
-    double b;
-    double c;
-    double d;
+    private HMM hmm;
+    private HMMTrainer hmmTrainer;
+    private HMMPredictor hmmPredictor;
+    double a,a1;
+    double b,b1;
+    double c,c1;
+    double d,d1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,12 +51,14 @@ public class MainActivity extends AppCompatActivity{
         ActivityCompat.requestPermissions(this, permissions, REQUEST_RECORD_AUDIO_PERMISSION);
         String AudioData = getExternalFilesDir(null).getAbsolutePath() + "/audio1.wav";
         String TestdataAudio = getExternalFilesDir(null).getAbsolutePath() + "/audio0.wav";
+        DecimalFormat df = new DecimalFormat("#.########");
+        df.setRoundingMode(RoundingMode.CEILING);
 
 
         audioRecorder = new AudioRecorder(AudioData);
         TestAudioRecorder = new AudioRecorder(TestdataAudio);
 
-//        hmm = new HMM(5, 27); // Example: 5 states, 13 observation symbols (for MFCC features)
+        hmm = new HMM(5, 27); // Example: 5 states, 13 observation symbols (for MFCC features)
 //        hmmTrainer = new HMMTrainer(hmm);
 //        hmmPredictor = new HMMPredictor(hmm);
         M_transitionProb = new double[numStates][numStates];
@@ -65,6 +70,13 @@ public class MainActivity extends AppCompatActivity{
         Button startButton = findViewById(R.id.startRecordingButton);
         Button stopButton = findViewById(R.id.stopRecordingButton);
         Button check = findViewById(R.id.check);
+        TextView textView_train_b1 = findViewById(R.id.textView3);
+        TextView textView_train_c1 = findViewById(R.id.textView4);
+        TextView textView_train_d1 = findViewById(R.id.textView5);
+        TextView textView_train_b = findViewById(R.id.textView6);
+        TextView textView_train_c = findViewById(R.id.textView7);
+        TextView textView_train_d = findViewById(R.id.textView8);
+
 
         Button startTestButton = findViewById(R.id.startTestRecordingButton);
         Button stopTestButton = findViewById(R.id.stopTestRecordingButton);
@@ -93,25 +105,23 @@ public class MainActivity extends AppCompatActivity{
 
                 train(observations, 250); // Train the model with the observation sequences
                 Toast.makeText(MainActivity.this, "Recording stopped", Toast.LENGTH_SHORT).show();
-                System.out.println("\nM_transitionProb:-\n");
-                for (int i = 0;i<5;i++){
-                    for (int j =0;j<5;j++){
-                        System.out.println(M_transitionProb[i][j]);
-                    }
-                }System.out.println("\nM_emissionProb:-\n");
-                for (int i = 0;i<5;i++){
-                    for (int j =0;j<27;j++){
-                        System.out.println(M_emissionProb[i][j]);
-                    }
-                }
-                System.out.println("\ninitialProb:-\n");
-                for (int i =0;i< 5;i++){
-                    System.out.println(M_initialProb[i]);
-                }
+
 
 
                 int[] prediction = predict(observations); // Predict the state sequence // Predict the state sequences
                 a = computeLikelihood(prediction);
+                b = forwardBackwardScore(observations);
+                c= score_1(observations);
+                d= viterbiScore(observations);
+                textView_train_b.setVisibility(View.VISIBLE);
+                textView_train_c.setVisibility(View.VISIBLE);
+                textView_train_d.setVisibility(View.VISIBLE);
+
+                textView_train_b.setText(Double.toString(b));
+                textView_train_c.setText(Double.toString(c));
+                textView_train_d.setText(Double.toString(d));
+
+
             }
         });
         startTestButton.setOnClickListener(new View.OnClickListener() {
@@ -130,14 +140,21 @@ public class MainActivity extends AppCompatActivity{
                 List<double[]> lpcFeaturesList = MFCCExtractor.extractLPC();
                 List<double[]> spectralFeaturesList = MFCCExtractor.extractSpectralFeatures();
 
-                System.out.println(flattenFeatures(mfccFeaturesList, lpcFeaturesList, spectralFeaturesList).length);
-                int[] kk = flattenFeatures(mfccFeaturesList, lpcFeaturesList, spectralFeaturesList);
-                System.out.println(kk[0]);
+                int[] observations = flattenFeatures(mfccFeaturesList, lpcFeaturesList, spectralFeaturesList);
+                int[] prediction = predict(observations); // Predict the state sequence // Predict the state sequences
+                a1 = computeLikelihood(prediction);
+                b1 = forwardBackwardScore(observations);
+                c1 = score_1(observations);
+                d1 = viterbiScore(observations);
+                textView_train_b1.setVisibility(View.VISIBLE);
+                textView_train_c1.setVisibility(View.VISIBLE);
+                textView_train_d1.setVisibility(View.VISIBLE);
+                textView_train_b1.setText(String.valueOf(b1));
+                textView_train_c1.setText(String.valueOf(c1));
+                textView_train_d1.setText(String.valueOf(d1));
 
-                b = forwardBackwardScore(kk);
-                c= score_1(kk);
-                d= viterbiScore(kk);
                 Toast.makeText(MainActivity.this, "Recording stopped", Toast.LENGTH_SHORT).show();
+                Log.d("LIKELYHOOD",String.valueOf(a1)+" Predection 2:- "+String.valueOf(b1)+" Predection 3:- "+String.valueOf(c1)+" Predection 4:- "+String.valueOf(d1));
 
             }
         });
@@ -146,13 +163,7 @@ public class MainActivity extends AppCompatActivity{
             public void onClick(View v) {
 
                 Log.d("LIKELYHOOD",String.valueOf(a)+" Predection 2:- "+String.valueOf(b)+" Predection 3:- "+String.valueOf(c)+" Predection 4:- "+String.valueOf(d));
-                // Use the prediction results
-                if(b>2 && b<3 && d < 3){
-                    Toast.makeText(MainActivity.this, "Authorized", Toast.LENGTH_SHORT).show();
-                }
-                else{
-                    Toast.makeText(MainActivity.this, "Not Authorized", Toast.LENGTH_SHORT).show();
-                }
+                
             }
         });
 
